@@ -1,0 +1,169 @@
+Student Grade Management (CSV):
+You are a teacher at a school and maintain student grade records in a CSV file. The file contains student IDs, names, and grades for different subjects (e.g., Math, Science, English). Develop a Python program to read this CSV file, calculate each student's average grade, display the top-performing students, allow the user to search for a student by ID or name, and update their grades. Provide an option to save the updated data back to the CSV file.
+import csv
+
+def read_grade_data(file_path):
+    with open(file_path, 'r', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        return list(reader)
+
+def calculate_average_grade(student):
+    grades = [int(grade) for grade in student.values() if grade.isdigit()]
+    return sum(grades) / len(grades)
+
+def display_top_students(students, n=3):
+    top_students = sorted(students, key=calculate_average_grade, reverse=True)[:n]
+    return top_students
+
+def search_student(students, query):
+    for student in students:
+        if query.lower() in student['ID'].lower() or query.lower() in student['Name'].lower():
+            return student
+    return None
+
+def update_grades(student, subject, new_grade):
+    student[subject] = new_grade
+
+def save_grade_data(students, file_path):
+    with open(file_path, 'w', newline='') as csvfile:
+        fieldnames = students[0].keys()
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(students)
+
+# Example usage:
+students = read_grade_data('grades.csv')
+query = input("Enter student ID or name to search: ")
+found_student = search_student(students, query)
+if found_student:
+    print("Student found:", found_student)
+    subject = input("Enter subject to update grade: ")
+    new_grade = input("Enter new grade: ")
+    update_grades(found_student, subject, new_grade)
+else:
+    print("Student not found.")
+save_grade_data(students, 'grades.csv')
+
+
+
+
+==================================================================================================================================================================================================================
+Product Inventory Tracking (JSON):
+Your company manages a product inventory using a JSON file. Each product entry includes details such as product ID, name, quantity in stock, and unit price. Write a Python program to read this JSON file, display the list of available products, allow the user to search for a product by name or ID, update the quantity of a product after purchase, and generate a report showing low-stock items (products with quantity below a certain threshold).
+
+import json
+
+def read_inventory(file_path):
+    with open(file_path, 'r') as jsonfile:
+        return json.load(jsonfile)
+
+def search_product(inventory, query):
+    for product in inventory:
+        if query.lower() in product['Name'].lower() or query == product['ID']:
+            return product
+    return None
+
+def update_quantity(product, quantity_sold):
+    product['Quantity'] -= quantity_sold
+
+def generate_low_stock_report(inventory, threshold=10):
+    low_stock = [product for product in inventory if product['Quantity'] < threshold]
+    return low_stock
+
+def save_inventory(inventory, file_path):
+    with open(file_path, 'w') as jsonfile:
+        json.dump(inventory, jsonfile, indent=4)
+
+# Example usage:
+inventory = read_inventory('inventory.json')
+query = input("Enter product name or ID to search: ")
+found_product = search_product(inventory, query)
+if found_product:
+    print("Product found:", found_product)
+    quantity_sold = int(input("Enter quantity sold: "))
+    update_quantity(found_product, quantity_sold)
+    low_stock_report = generate_low_stock_report(inventory)
+    print("Low stock items:", low_stock_report)
+else:
+    print("Product not found.")
+save_inventory(inventory, 'inventory.json')
+
+
+==================================================================================================================================================================================================================
+Customer Database Management (CSV):
+You are working for a small retail business that maintains a customer database in a CSV file. The file contains customer information such as name, email, phone number, and purchase history. Develop a Python program to read this CSV file, allow the user to search for a customer by name or email, and update their purchase history. Additionally, provide an option to add new customers to the database and save the updated data back to the CSV file.
+
+import csv
+
+def read_customer_data(file_path):
+    with open(file_path, 'r', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        return list(reader)
+
+def search_customer(customers, query):
+    for customer in customers:
+        if query.lower() in customer['Name'].lower() or query.lower() in customer['Email'].lower():
+            return customer
+    return None
+
+def update_purchase_history(customer, purchase):
+    customer['Purchase History'] += f",{purchase}"
+
+def add_new_customer(customers, new_customer):
+    customers.append(new_customer)
+
+def save_customer_data(customers, file_path):
+    with open(file_path, 'w', newline='') as csvfile:
+        fieldnames = customers[0].keys()
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(customers)
+
+# Example usage:
+customers = read_customer_data('customers.csv')
+query = input("Enter customer name or email to search: ")
+found_customer = search_customer(customers, query)
+if found_customer:
+    print("Customer found:", found_customer)
+    purchase = input("Enter purchase details: ")
+    update_purchase_history(found_customer, purchase)
+else:
+    print("Customer not found. Adding new customer...")
+    new_customer = {'Name': 'New Customer', 'Email': 'new@example.com', 'Purchase History': 'First Purchase'}
+    add_new_customer(customers, new_customer)
+save_customer_data(customers, 'customers.csv')
+
+
+==================================================================================================================================================================================================================
+Text File Encryption/Decryption(TXT):
+You are working on a security application that requires encrypting and decrypting text files using a simple substitution cipher. Write a Python program that can encrypt or decrypt the contents of a text file using a provided substitution key. The program should provide options for the user to choose between encryption and decryption, specify the input and output file paths, and enter the substitution key.
+
+def encrypt_text_file(input_file, output_file, substitution_key):
+    with open(input_file, 'r') as file:
+        content = file.read()
+
+    # Perform encryption using substitution key
+    encrypted_content = "".join(substitution_key.get(char, char) for char in content)
+
+    # Save encrypted content to output file
+    with open(output_file, 'w') as file:
+        file.write(encrypted_content)
+
+def decrypt_text_file(input_file, output_file, substitution_key):
+    with open(input_file, 'r') as file:
+        encrypted_content = file.read()
+
+    # Perform decryption using inverse substitution key
+    inverse_substitution_key = {v: k for k, v in substitution_key.items()}
+    decrypted_content = "".join(inverse_substitution_key.get(char, char) for char in encrypted_content)
+
+    # Save decrypted content to output file
+    with open(output_file, 'w') as file:
+        file.write(decrypted_content)
+
+# Example usage:
+substitution_key = {'a': 'x', 'b': 'y', 'c': 'z', 'd': 'w', ...}  # Define substitution key
+encrypt_text_file('input.txt', 'encrypted.txt', substitution_key)
+decrypt_text_file('encrypted.txt', 'decrypted.txt', substitution_key)
+
+
